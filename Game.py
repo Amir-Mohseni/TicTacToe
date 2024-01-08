@@ -34,7 +34,11 @@ class Game:
 
                 print(self.board.placePiece(x, y))
             else:
-                best_move = self.players[self.board.turn].makeMove(self.board)
+                pieces = ("O", "X")
+                if self.board.turn == 0:
+                    pieces = ("X", "O")
+                best_move = self.players[self.board.turn].makeMove(self.board, pieces)
+
                 self.board.placePiece(best_move[1], best_move[2])
                 print("Computer placed piece at " + str(best_move[1]) + ", " + str(best_move[2]))
             self.board.checkFinished()

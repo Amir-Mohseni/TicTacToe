@@ -31,6 +31,8 @@ class Board:
         for i in range(3):
             for j in range(3):
                 if self.board[i][j] == '-':
+                    self.gameFinished = False
+                    self.winner = None
                     return False
 
         self.gameFinished = True

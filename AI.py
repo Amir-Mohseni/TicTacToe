@@ -7,26 +7,55 @@ class AI:
     def __init__(self, name):
         self.name = name
 
-    def makeMove(self, board, depth=0):
-        if depth % 2 == 0:
-            best_answer = -2, -1, -1
+    def minimax(self, board, func, ai_piece, human_piece):
+        if board.checkFinished():
+            if board.winner is None:
+                return 0, -1, -1
+            elif board.winner == ai_piece:
+                return 1, -1, -1
+            else:
+                return -1, -1, -1
+
+        if func == "max":
+            best_score = -2
+            best_x = -1
+            best_y = -1
+            for i in range(3):
+                for j in range(3):
+                    if board.board[i][j] == "-":
+                        board.board[i][j] = ai_piece
+                        score, x, y = self.minimax(board, "min", ai_piece, human_piece)
+                        board.board[i][j] = "-"
+                        if score > best_score:
+                            best_score = score
+                            best_x = i
+                            best_y = j
+            return best_score, best_x, best_y
         else:
-            best_answer = 2, -1, -1
+            best_score = 2
+            best_x = -1
+            best_y = -1
+            for i in range(3):
+                for j in range(3):
+                    if board.board[i][j] == "-":
+                        board.board[i][j] = human_piece
+                        score, x, y = self.minimax(board, "max", ai_piece, human_piece)
+                        board.board[i][j] = "-"
+                        if score < best_score:
+                            best_score = score
+                            best_x = i
+                            best_y = j
+            return best_score, best_x, best_y
+
+    def makeMove(self, board, pieces):
+        ai_piece = pieces[0]
+        human_piece = pieces[1]
         for i in range(3):
             for j in range(3):
                 if board.board[i][j] == "-":
-                    new_board = Board()
-                    new_board.board = copy.deepcopy(board.board)
-                    new_board.placePiece(i, j)
-                    if new_board.checkFinished():
-                        if new_board.winner is None:
-                            return 0, i, j
-                        else:
-                            return 1, i, j
-                    else:
-                        if depth % 2 == 0:
-                            best_answer = max(best_answer, self.makeMove(new_board, depth + 1))
-                        else:
-                            best_answer = min(best_answer, self.makeMove(new_board, depth + 1))
-        return best_answer
-
+                    board.board[i][j] = human_piece
+                    if board.checkFinished():
+                        board.board[i][j] = "-"
+                        return 0, i, j
+                    board.board[i][j] = "-"
+        return self.minimax(board, "max", ai_piece, human_piece)
