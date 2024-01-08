@@ -1,8 +1,3 @@
-import copy
-
-from Board import *
-
-
 class AI:
     def __init__(self, name):
         self.name = name
